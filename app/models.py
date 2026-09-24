@@ -87,3 +87,34 @@ class Questao(models.Model):
         verbose_name = "Questão"
         verbose_name_plural = "Questões"
         ordering = ["pk"]
+
+
+class Forum_Pergunta(models.Model):
+    titulo = models.CharField(max_length=200)
+    descricao = models.TextField(blank=True)
+    criado_por = models.ForeignKey(User, on_delete=models.CASCADE, related_name="forum_perguntas")
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.titulo
+
+    class Meta:
+        verbose_name = "Tópico de Dúvida"
+        verbose_name_plural = "Tópicos de Dúvida"
+        ordering = ["-criado_em"]
+
+
+class Forum_Resposta(models.Model):
+    pergunta = models.ForeignKey(Forum_Pergunta, on_delete=models.CASCADE, related_name="respostas")
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="forum_respostas")
+    conteudo = models.TextField()
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Resposta de {self.usuario.username} em {self.pergunta.titulo}"
+
+    class Meta:
+        verbose_name = "Resposta"
+        verbose_name_plural = "Respostas"
+        ordering = ["-criado_em"]

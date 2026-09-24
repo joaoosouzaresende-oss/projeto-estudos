@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block titulo %}Tópico: {{ pergunta.titulo}}{% endblock %}
+
+{% block conteudo %}
+<h1 class="pagina-titulo">Tópico: {{ pergunta.titulo }}</h1>
+
+<div class="meta-topico">
+  Por {{ pergunta.criado_por.username }} | {{ pergunta.criado_em|date:"d/m/Y H:i" }}
+</div>
+
+{% if respostas %}
+<div class="respostas-list">
+  {% for resp in respostas %}
+  <div class="item-resposta">
+    <strong>{{ resp.usuario.username }}</strong>
+    <span class="meta-resposta">{{ resp.criado_em|date:"d/m/Y H:i" }}</span>
+    <p>{{ resp.conteudo }}</p>
+  </div>
+  {% empty %}
+  <p>Ainda não há respostas para este tópico.</p>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if user.is_authenticated %}
+{% if pode_responder %}
+<form method="POST" action="{% url 'responder_forum' pergunta.id %}" class="form-resposta">
+  {% csrf_token %}
+  <div class="campo-grupo">
+    <textarea name="conteudo" rows="3" placeholder="Sua resposta..." required></textarea>
+  </div>
+  <button type="submit" class="botao-princip">Enviar Resposta</button>
+</form>
+{% else %}
+<p class="aviso-limite">Você já respondeu 3 vezes seguidas neste tópico. Aguarde outra interação antes de responder novamente.</p>
+<form method="POST" action="{% url 'responder_forum' pergunta.id %}" class="form-resposta" style="display:none;">
+  {% csrf_token %}
+  <button type="submit" style="display:none;">Enviar</button>
+</form>
+{% endif %}
+{% else %}
+<p>Faça <a href="{% url 'login' %}">login</a> para responder ao tópico.</p>
+{% endif %}
+{% endif %}
+
+<p class="voltar"><a href="{% url 'forum' %}">← Voltar ao Fórum</a></p>
+{% endblock %}

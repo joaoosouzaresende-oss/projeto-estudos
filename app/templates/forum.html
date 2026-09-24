@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block titulo %}Fórum Tira-Dúvidas{% endblock %}
+
+{% block conteudo %}
+<h1 class="pagina-titulo">Fórum Tira-Dúvidas</h1>
+<p class="pagina-semititulo">Faça e responda dúvidas sobre as matérias.</p>
+
+{% if request.user.is_authenticated %}
+<div class="acoes-rápidas">
+  <a href="{% url 'criar_topico' %}" class="botao-princip">Novo Tópico</a>
+</div>
+{% endif %}
+
+{% if topicos %}
+<div class="lista-topicos">
+  {% for topo in topicos %}
+  <div class="item-topico">
+    <h3><a href="{% url 'topico' topo.id %}">{{ topo.titulo }}</a></h3>
+    <p class="meta-topico">Por {{ topo.criado_por.username }} | {{ topo.criado_em|date:"d/m/Y H:i" }}</p>
+    <p class="desc-topico">{{ topo.descricao|truncatewords:30 }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="vazio">Nenhum tópico criado ainda. Seja o primeiro a perguntar!</div>
+{% endif %}
+{% endblock %}

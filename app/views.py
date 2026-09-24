@@ -272,5 +272,73 @@ def ranking_view(request):
 
     return render(request, "ranking.html", {
         "perfis": perfis,
-        "posicao_usuario": posicao_geral,
+        "posicao_usuario": posicao_usuario,
     })
+
+
+def _puede_responder(usuario, pergunta):
+    """Verifica se o usuário pode responder (máx 3 respostas seguidas sem interação)."""
+    from django.db.models import Q
+    ultimas_respostas = Forum_Resposta.objects.filter(
+        pergunta=pergunta
+    ).order_by("-criado_em")
+    contador = 0
+    for r in ultimas_respostas:
+        if r.usuario == usuario:
+            contador += 1
+            if contador >= 3:
+                return False
+        else:
+            contador = 0
+    return True
+
+
+@login_required(login_url="login")
+def forum_view(request):
+    """Lista todos os tópicos de dúvida ordenados por data (mais recentes primeiro)."""
+    topicos = Forum_Pergunta.objects.all().order_by("-criado_em")
+    return render(request, "forum.html", {"topicos": topicos})
+
+
+@login_required(login_url="login")
+def topico_view(request, pk):
+    """Visualiza um tópico específico e suas respostas cronologicamente."""
+    pergunta = get_object_or_404(Forum_Pergunta, pk=pk)
+    respostas = pergunta.respostas.all().order_by("criado_em")
+    pode_responder = _puede_responder(request.user, pergunta)
+    return render(request, "topico.html", {
+        "pergunta": pergunta,
+        "respostas": respostas,
+        "pode_responder": pode_responder,
+    })
+
+
+@login_required(login_url="login")
+def criar_topico_view(request):
+    """Permite ao usuário criar um novo tópico de dúvida."""
+    if request.method == "POST":
+        titulo = request.POST.get("titulo")
+        descricao = request.POST.get("descricao", "")
+        Forum_Pergunta.objects.create(
+            titulo=titulo,
+            descricao=descricao,
+            criado_por=request.user,
+        )
+        return redirect("forum")
+    return render(request, "criar_topico.html")
+
+
+@login_required(login_url="login")
+def responder_view(request, pk):
+    """Permite ao usuário responder um tópico (respectando a regra de 3 respostas seguidas)."""
+    pergunta = get_object_or_404(Forum_Pergunta, pk=pk)
+    if request.method == "POST":
+        conteudo = request.POST.get("conteudo", "").strip()
+        if conteudo and _puede_responder(request.user, pergunta):
+            Forum_Resposta.objects.create(
+                pergunta=pergunta,
+                usuario=request.user,
+                conteudo=conteudo,
+            )
+        return redirect("topico", pk=pk)
+    return redirect("topico", pk=pk)

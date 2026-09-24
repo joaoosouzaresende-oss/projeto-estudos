@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block titulo %}Criar Novo Tópico{% endblock %}
+
+{% block conteudo %}
+<h1 class="pagina-titulo">Novo Tópico de Dúvida</h1>
+
+<form method="POST" class="form-topico">
+  {% csrf_token %}
+  <div class="campo-grupo">
+    <label for="titulo">Título:</label>
+    <input type="text" name="titulo" id="titulo" class="input-topo" required>
+  </div>
+  <div class="campo-grupo">
+    <label for="descricao">Descrição (opcional):</label>
+    <textarea name="descricao" id="descricao" class="textarea-topo" rows="3" placeholder="Explique sua dúvida..."></textarea>
+  </div>
+  <button type="submit" class="botao-princip">Publicar Tópico</button>
+  <a href="{% url 'forum' %}" class="botao-secund">Voltar ao Fórum</a>
+</form>
+{% endblock %}

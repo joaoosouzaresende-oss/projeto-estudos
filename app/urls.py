@@ -15,4 +15,9 @@ urlpatterns = [
     path("responder/<int:conteudo_id>/", views.responder_view, name="responder"),
     path("resultado/<int:conteudo_id>/", views.resultado_view, name="resultado"),
     path("ranking/", views.ranking_view, name="ranking"),
+    # Forum
+    path("forum/", views.forum_view, name="forum"),
+    path("forum/topic/<int:pk>/", views.topico_view, name="topico"),
+    path("forum/criar-topico/", views.criar_topico_view, name="criar_topico"),
+    path("forum/responder/<int:pk>/", views.responder_view, name="responder_forum"),
 ]
