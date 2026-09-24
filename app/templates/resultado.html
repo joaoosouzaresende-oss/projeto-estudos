@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block titulo %}Resultado — {{ conteudo.nome }}{% endblock %}
+
+{% block conteudo %}
+<div class="resultado-wrapper">
+  <div class="card-resultado">
+    <div class="resultado-circulo {% if desempenho >= 70 %}resultado-circulo-bom{% elif desempenho >= 40 %}resultado-circulo-medio{% else %}resultado-circulo-ruim{% endif %}">
+      <span class="resultado-porcento">{{ desempenho }}%</span>
+    </div>
+
+    <h1 class="resultado-titulo">
+      {% if desempenho >= 70 %}Muito bem!{% elif desempenho >= 40 %}Bom esforço!{% else %}Continue praticando!{% endif %}
+    </h1>
+
+    <p class="resultado-subtitulo">
+      Você acertou <strong>{{ acertos }}</strong> de <strong>{{ total }}</strong> questões
+      em <strong>{{ conteudo.nome }}</strong>.
+    </p>
+
+    <div class botoes-resultado">
+      <a href="{% url 'questoes' conteudo.id %}" class="botao resultado-botao">Tentar novamente</a>
+      <a href="{% url 'conteudos' conteudo.materia.id %}" class="botao-voltar resultado-botao-voltar">Voltar aos conteúdos</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

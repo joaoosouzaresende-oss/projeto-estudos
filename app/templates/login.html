@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block titulo %}Entrar{% endblock %}
+
+{% block mainclasse %}pagina-login{% endblock %}
+
+{% block conteudo %}
+<div class="container">
+  <div class="card">
+    <h1 class="card-titulo">Entrar</h1>
+
+    {% if erro %}
+      <div class="erro">{{ erro }}</div>
+    {% endif %}
+
+    <form method="post" class="formulario" novalidate>
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="{{ form.nome.id_for_label }}">Nome</label>
+        {{ form.nome }}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.senha.id_for_label }}">Senha</label>
+        {{ form.senha }}
+      </div>
+      <button type="submit" class="botao">Entrar</button>
+    </form>
+
+    <p class="rodape-form">
+      Ainda não tem conta? <a href="{% url 'cadastro' %}">Cadastre-se</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

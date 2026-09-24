@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block titulo %}Questões — {{ conteudo.nome }}{% endblock %}
+
+{% block conteudo %}
+<a href="{% url 'conteudos' conteudo.materia.id %}" class="botao-voltar">&larr; Voltar</a>
+
+<div class="questao-wrapper">
+  {% if mensagem %}
+    <div class="vazio">{{ mensagem }}</div>
+  {% else %}
+    <div class="questao-topo">
+      <span class="questao-materia">{{ conteudo.materia.nome }}</span>
+      <span class="questao-contador">{{ indice|add:1 }} / {{ questoes|length }}</span>
+    </div>
+
+    <div class="card-questao">
+      <p class="questao-enunciado">{{ questao_atual.enunciado }}</p>
+
+      <form method="POST" action="{% url 'responder' conteudo.id %}" class="questao-form">
+        {% csrf_token %}
+
+        <label class="questao-alternativa">
+          <input type="radio" name="alternativa" value="A" required>
+          <span class="questao-alt-letra">A</span>
+          <span class="questao-alt-texto">{{ questao_atual.alt_a }}</span>
+        </label>
+
+        <label class="questao-alternativa">
+          <input type="radio" name="alternativa" value="B">
+          <span class="questao-alt-letra">B</span>
+          <span class="questao-alt-texto">{{ questao_atual.alt_b }}</span>
+        </label>
+
+        <label class="questao-alternativa">
+          <input type="radio" name="alternativa" value="C">
+          <span class="questao-alt-letra">C</span>
+          <span class="questao-alt-texto">{{ questao_atual.alt_c }}</span>
+        </label>
+
+        <label class="questao-alternativa">
+          <input type="radio" name="alternativa" value="D">
+          <span class="questao-alt-letra">D</span>
+          <span class="questao-alt-texto">{{ questao_atual.alt_d }}</span>
+        </label>
+
+        <label class="questao-alternativa">
+          <input type="radio" name="alternativa" value="E">
+          <span class="questao-alt-letra">E</span>
+          <span class="questao-alt-texto">{{ questao_atual.alt_e }}</span>
+        </label>
+
+        <button type="submit" class="botao questao-botao">Responder</button>
+      </form>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

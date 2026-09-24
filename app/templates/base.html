@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titulo %}Projeto de Estudos{% endblock %}</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="cabecalho">
+    <div class="cabecalho-brand">
+      <span class="cabecalho-logo">P</span>
+      <span class="cabecalho-titulo">Projeto de Estudos</span>
+    </div>
+    <nav class="cabecalho-nav">
+      {% if request.user.is_authenticated %}
+        <a href="{% url 'materias' %}" class="cabecalho-link">Matérias</a>
+        <a href="{% url 'ranking' %}" class="cabecalho-link">Ranking</a>
+        <span class="cabecalho-usuario">{{ request.user.username }}</span>
+        <a href="{% url 'logout' %}" class="cabecalho-link">Sair</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="{% block mainclasse %}pagina-painel{% endblock %}">
+    {% block conteudo %}{% endblock %}
+  </main>
+</body>
+</html>

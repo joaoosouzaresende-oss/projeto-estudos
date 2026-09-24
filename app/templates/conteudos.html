@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ materia.nome }}{% endblock %}
+
+{% block conteudo %}
+<a href="{% url 'materias' %}" class="botao-voltar">&larr; Voltar</a>
+
+<h1 class="pagina-titulo">{{ materia.nome }}</h1>
+<p class="pagina-semititulo">{{ materia.conteudos.count }} conteúdo(s) disponível(is).</p>
+
+{% if conteudos %}
+  <div class="lista-conteudo">
+    {% for item in conteudos %}
+      {% with conteudo=item.objeto percentual=item.percentual %}
+        <div class="item-conteudo">
+          <a href="{% url 'leitura' conteudo.id %}" class="item-conteudo-link">
+            <span class="item-conteudo-info">
+              <span class="item-conteudo-nome">{{ conteudo.nome }}</span>
+              <span class="barra-progresso">
+                <span class="barra-progresso-preenchida" style="width: {{ percentual }}%;"></span>
+              </span>
+            </span>
+            <span class="item-conteudo-pct">{{ percentual }}%</span>
+          </a>
+          {% if conteudo.questoes.count > 0 %}
+            <a href="{% url 'questoes' conteudo.id %}" class="botao-praticar">Praticar</a>
+          {% endif %}
+        </div>
+      {% endwith %}
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="vazio">Esta matéria ainda não tem conteúdos cadastrados.</div>
+{% endif %}
+{% endblock %}

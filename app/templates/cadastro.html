@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block titulo %}Cadastre-se{% endblock %}
+
+{% block mainclasse %}pagina-login{% endblock %}
+
+{% block conteudo %}
+<div class="container">
+  <div class="card">
+    <h1 class="card-titulo">Cadastre-se</h1>
+
+    <form method="post" class="formulario" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="erro">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="{{ form.nome.id_for_label }}">Nome</label>
+        {{ form.nome }}
+        {% if form.nome.errors %}<div class="erro-campo">{{ form.nome.errors }}</div>{% endif %}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.email.id_for_label }}">Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}<div class="erro-campo">{{ form.email.errors }}</div>{% endif %}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.telefone.id_for_label }}">Telefone</label>
+        {{ form.telefone }}
+        {% if form.telefone.errors %}<div class="erro-campo">{{ form.telefone.errors }}</div>{% endif %}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.senha.id_for_label }}">Senha</label>
+        {{ form.senha }}
+        {% if form.senha.errors %}<div class="erro-campo">{{ form.senha.errors }}</div>{% endif %}
+      </div>
+      <button type="submit" class="botao">Criar conta</button>
+    </form>
+
+    <p class="rodape-form">
+      Já tem uma conta? <a href="{% url 'login' %}">Entrar</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ conteudo.nome }}{% endblock %}
+
+{% block conteudo %}
+<a href="{% url 'conteudos' conteudo.materia.id %}" class="botao-voltar">&larr; Voltar</a>
+
+<div class="leitura-wrapper">
+  <div class="leitura-barra-topo">
+    <span class="barra-progresso">
+      <span id="barra" class="barra-progresso-preenchida" style="width: {{ progresso.percentual }}%;"></span>
+    </span>
+    <span id="pct" class="leitura-pct">{{ progresso.percentual }}%</span>
+  </div>
+
+  <article class="card-leitura">
+    <h1>{{ conteudo.nome }}</h1>
+    {% if conteudo.referencia %}
+      <a class="referencia" href="{{ conteudo.referencia }}" target="_blank" rel="noopener">Fonte / referência</a>
+    {% endif %}
+    <div class="conteudo-texto">{{ conteudo.conteudo|linebreaks }}</div>
+  </article>
+</div>
+
+<script>
+  const CONTEUDO_ID = {{ conteudo.id }};
+  const CSRF = "{{ csrf_token }}";
+  const urlSalvar = "{% url 'salvar_progresso' %}";
+
+  const barra = document.getElementById("barra");
+  const pctEl = document.getElementById("pct");
+  let ultimoEnviado = {{ progresso.percentual }};
+
+  function porcentagemLeitura() {
+    const doc = document.documentElement;
+    const total = doc.scrollHeight - doc.clientHeight;
+    if (total <= 0) return 100;
+    const pct = Math.round((doc.scrollTop / total) * 100);
+    return Math.max(0, Math.min(100, pct));
+  }
+
+  function atualizarUI(pct) {
+    barra.style.width = pct + "%";
+    pctEl.textContent = pct + "%";
+  }
+
+  function salvarProgresso(pct) {
+    if (pct === ultimoEnviado) return;
+    ultimoEnviado = pct;
+    const corpo = new URLSearchParams();
+    corpo.append("conteudo_id", CONTEUDO_ID);
+    corpo.append("percentual", pct);
+    fetch(urlSalvar, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "X-CSRFToken": CSRF
+      },
+      body: corpo,
+      credentials: "same-origin",
+      keepalive: true
+    });
+  }
+
+  let emEspera = false;
+  window.addEventListener("scroll", function () {
+    if (emEspera) return;
+    emEspera = true;
+    setTimeout(function () {
+      const pct = porcentagemLeitura();
+      atualizarUI(pct);
+      if (Math.abs(pct - ultimoEnviado) >= 5) salvarProgresso(pct);
+      emEspera = false;
+    }, 250);
+  });
+
+  window.addEventListener("pagehide", function () {
+    const pct = porcentagemLeitura();
+    atualizarUI(pct);
+    salvarProgresso(pct);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block titulo %}Boas-vindas{% endblock %}
+
+{% block mainclasse %}pagina-login{% endblock %}
+
+{% block conteudo %}
+<div class="container">
+  <div class="card">
+    <h1 class="card-titulo">Bem-vindo, {{ request.user.username }}!</h1>
+    <p class="texto">Você está logado com sucesso.</p>
+    <a href="{% url 'materias' %}" class="botao botao-link">Ir para Matérias</a>
+  </div>
+</div>
+{% endblock %}

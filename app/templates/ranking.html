@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block titulo %}Ranking{% endblock %}
+
+{% block conteudo %}
+<h1 class="pagina-titulo">Ranking</h1>
+<p class="pagina-semititulo">Top 100 alunos por pontuação.</p>
+
+<div class="ranking-posicao">
+  Sua posição: <strong>#{{ posicao_usuario }}</strong>
+</div>
+
+{% if perfis %}
+  <div class="ranking-lista">
+    {% for perfil in perfis %}
+      <div class="ranking-item {% if perfil.usuario == request.user %}ranking-item-voce{% endif %}">
+        <span class="ranking-pos">
+          {% if forloop.counter == 1 %}🥇
+          {% elif forloop.counter == 2 %}🥈
+          {% elif forloop.counter == 3 %}🥉
+          {% else %}{{ forloop.counter }}{% endif %}
+        </span>
+        <span class="ranking-nome">{{ perfil.usuario.username }}</span>
+        <span class="ranking-pontos">{{ perfil.pontuacao }} pts</span>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="vazio">Nenhum aluno pontuou ainda. Resolva questões para entrar no ranking!</div>
+{% endif %}
+{% endblock %}

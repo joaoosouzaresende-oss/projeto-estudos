@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block titulo %}Matérias{% endblock %}
+
+{% block conteudo %}
+<h1 class="pagina-titulo">Matérias</h1>
+<p class="pagina-semititulo">Escolha uma disciplina para ver os conteúdos disponíveis.</p>
+
+{% if materias %}
+  <div class="grade">
+    {% for materia in materias %}
+      <a href="{% url 'conteudos' materia.id %}" class="card-materia">
+        <span class="card-materia-icone">{{ materia.nome|slice:":1"|upper }}</span>
+        <span class="card-materia-titulo">{{ materia.nome }}</span>
+        <span class="card-materia-count">{{ materia.conteudos.count }} conteúdo(s)</span>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="vazio">Nenhuma matéria cadastrada ainda. Peça ao admin para adicionar no painel de administração.</div>
+{% endif %}
+{% endblock %}

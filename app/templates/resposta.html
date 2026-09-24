@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block titulo %}Resposta — Questão {{ indice|add:1 }}{% endblock %}
+
+{% block conteudo %}
+<a href="{% url 'questoes' questao.conteudo.id %}" class="botao-voltar">&larr; Voltar às questões</a>
+
+<div class="questao-wrapper">
+  <div class="questao-topo">
+    <span class="questao-materia">{{ questao.conteudo.materia.nome }}</span>
+    <span class="questao-contador">{{ indice|add:1 }} / {{ total }}</span>
+  </div>
+
+  <div class="card-questao">
+    <p class="questao-enunciado">{{ questao.enunciado }}</p>
+
+    <div class="resposta-alternativas">
+      {% with alternativas="ABCDEFGH" %}
+        {% for alt in "ABCDE" %}
+          {% if alt == questao.resposta %}
+            <div class="resposta-alt resposta-alt-correta">
+              <span class="questao-alt-letra">{{ alt }}</span>
+              <span class="questao-alt-texto">
+                {% if alt == "A" %}{{ questao.alt_a }}{% endif %}
+                {% if alt == "B" %}{{ questao.alt_b }}{% endif %}
+                {% if alt == "C" %}{{ questao.alt_c }}{% endif %}
+                {% if alt == "D" %}{{ questao.alt_d }}{% endif %}
+                {% if alt == "E" %}{{ questao.alt_e }}{% endif %}
+              </span>
+              <span class="resposta-tag">Correta</span>
+            </div>
+          {% elif alt == escolhida and not acertou %}
+            <div class="resposta-alt resposta-alt-errada">
+              <span class="questao-alt-letra">{{ alt }}</span>
+              <span class="questao-alt-texto">
+                {% if alt == "A" %}{{ questao.alt_a }}{% endif %}
+                {% if alt == "B" %}{{ questao.alt_b }}{% endif %}
+                {% if alt == "C" %}{{ questao.alt_c }}{% endif %}
+                {% if alt == "D" %}{{ questao.alt_d }}{% endif %}
+                {% if alt == "E" %}{{ questao.alt_e }}{% endif %}
+              </span>
+              <span class="resposta-tag">Sua resposta</span>
+            </div>
+          {% elif alt == escolhida and acertou %}
+            <div class="resposta-alt resposta-alt-acerto">
+              <span class="questao-alt-letra">{{ alt }}</span>
+              <span class="questao-alt-texto">
+                {% if alt == "A" %}{{ questao.alt_a }}{% endif %}
+                {% if alt == "B" %}{{ questao.alt_b }}{% endif %}
+                {% if alt == "C" %}{{ questao.alt_c }}{% endif %}
+                {% if alt == "D" %}{{ questao.alt_d }}{% endif %}
+                {% if alt == "E" %}{{ questao.alt_e }}{% endif %}
+              </span>
+              <span class="resposta-tag">Sua resposta</span>
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endwith %}
+    </div>
+
+    {% if questao.comentario %}
+      <div class="resposta-comentario">
+        <strong>Explicação:</strong> {{ questao.comentario }}
+      </div>
+    {% endif %}
+
+    {% if acertou %}
+      <div class="resposta-resultado resposta-resultado-acerto">Você acertou! +10 pontos</div>
+    {% else %}
+      <div class="resposta-resultado resposta-resultado-errou">Você errou.</div>
+    {% endif %}
+
+    {% if proxima_disponivel %}
+      <a href="{% url 'questoes' questao.conteudo.id %}" class="botao questao-botao" id="btn-proxima">Próxima &rarr;</a>
+    {% else %}
+      <a href="{% url 'resultado' questao.conteudo.id %}" class="botao questao-botao">Ver resultado &rarr;</a>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  document.getElementById("btn-proxima").addEventListener("click", function(e) {
+    e.preventDefault();
+    var form = document.createElement("form");
+    form.method = "GET";
+    form.action = this.href;
+    document.body.appendChild(form);
+    form.submit();
+  });
+</script>
+{% endblock %}
