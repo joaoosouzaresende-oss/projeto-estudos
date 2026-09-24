@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from .models import Perfil, LoginAttempt, Materia, Conteudo, ProgressoLeitura, Questao
+from .models import Forum_Pergunta, Forum_Resposta, Perfil, LoginAttempt, Materia, Conteudo, ProgressoLeitura, Questao
 
 
 class PerfilInline(admin.StackedInline):
@@ -86,3 +86,23 @@ class QuestaoAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Questao, QuestaoAdmin)
+
+
+class Forum_PerguntaAdmin(admin.ModelAdmin):
+    list_display = ("titulo", "criado_por", "criado_em")
+    list_filter = ("criado_em",)
+    search_fields = ("titulo", "descricao", "criado_por__username")
+
+
+class Forum_RespostaAdmin(admin.ModelAdmin):
+    list_display = ("pergunta_titulo", "usuario", "criado_em")
+    list_filter = ("criado_em",)
+    search_fields = ("conteudo", "usuario__username", "pergunta__titulo")
+
+    @admin.display(description="Tópico")
+    def pergunta_titulo(self, obj):
+        return obj.pergunta.titulo
+
+
+admin.site.register(Forum_Pergunta, Forum_PerguntaAdmin)
+admin.site.register(Forum_Resposta, Forum_RespostaAdmin)
